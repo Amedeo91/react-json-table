@@ -1,233 +1,231 @@
 var React = require('react');
-// createClass method was deprecated and move into a separate package
-var createReactClass = require('create-react-class');
-var $ = React.DOM;
 
 // Some shared attrs for JsonTable and JsonRow
-var defaultSettings = {
-		header: true,
-		noRowsMessage: 'No items',
-		classPrefix: 'json'
-	},
-	getSetting = function( name ){
-		var settings = this.props.settings;
+let defaultSettings = {
+    header: true,
+    noRowsMessage: 'No items',
+    classPrefix: 'json'
+  },
+  getSetting = function( name, $this ){
+    const settings = $this.props.settings;
 
-		if( !settings || typeof settings[ name ] === 'undefined' )
-			return defaultSettings[ name ];
+    if( !settings || typeof settings[ name ] === 'undefined' )
+      return defaultSettings[ name ];
 
-		return settings[ name ];
-	}
+    return settings[ name ];
+  }
 ;
 
+class JsonTable extends React.Component{
+  getSetting(name){
+    return getSetting(name, this)
+  };
 
-var Row = createReactClass({
-	getSetting: getSetting,
+  render() {
+    const cols = this.normalizeColumns(),
+      contents = [this.renderRows( cols )]
+    ;
 
-	render: function() {
-		var me = this,
-			props = this.props,
-			cellClass = this.getSetting('cellClass'),
-			rowClass = this.getSetting('rowClass'),
-			prefix = this.getSetting('classPrefix'),
-			cells = props.columns.map( function( col ){
-				var content = col.cell,
-					key = col.key,
-					className = prefix + 'Cell ' + prefix + 'Cell_' + key
-				;
+    if( this.getSetting('header') )
+      contents.unshift( this.renderHeader( cols ) );
 
-				if( cellClass )
-					className = cellClass( className, key, props.item );
+    const tableClass = this.props.className || this.getSetting( 'classPrefix' ) + 'Table';
 
-				if( typeof content == 'function' )
-					content = content( props.item, key );
+    return React.DOM.table({ className: tableClass }, contents );
+  }
 
-				return $.td( {
-					className: className,
-					key: key,
-					"data-key": key,
-					onClick: me.onClickCell
-				}, content );
-			})
-		;
+  renderHeader( cols ) {
+    const me = this,
+      prefix = this.getSetting( 'classPrefix' ),
+      headerClass = this.getSetting( 'headerClass' ),
+      cells = cols.map( function(col){
+        let className = prefix + 'Column';
+        if( headerClass )
+          className = headerClass( className, col.key );
 
-		var className = prefix + 'Row ' + prefix +
-			(props.i % 2 ? 'Odd' : 'Even')
-		;
+        return React.DOM.th(
+          { className: className, key: col.key, onClick: me.onClickHeader, "data-key": col.key },
+          col.label
+        );
+      })
+    ;
 
-		if( props.reactKey )
-			className += ' ' + prefix + 'Row_' + props.reactKey;
+    return React.DOM.thead({ key: 'th' },
+      React.DOM.tr({ className: prefix + 'Header' }, cells )
+    );
+  }
 
-		if( rowClass )
-			className = rowClass( className, props.item );
+  renderRows( cols ) {
+    let me = this,
+      items = this.props.rows,
+      settings = this.props.settings || {},
+      i = 1
+    ;
 
-		return $.tr({
-			className: className,
-			onClick: me.onClickRow,
-			key: this.props.reactKey
-		}, cells );
-	},
+    if( !items || !items.length )
+      return React.DOM.tbody({key:'body'}, [React.DOM.tr({key:'row'}, React.DOM.td({key:'column'}, this.getSetting('noRowsMessage') ))]);
 
-	onClickCell: function( e ){
-		this.props.onClickCell( e, e.target.dataset.key, this.props.item );
-	},
+    const rows = items.map( function( item ){
+      const key = me.getKey( item, i );
+      return React.createElement(Row, {
+        key: key,
+        reactKey: key,
+        item: item,
+        settings: settings,
+        columns: cols,
+        i: i++,
+        onClickRow: me.onClickRow,
+        onClickCell: me.onClickCell
+      });
+    });
 
-	onClickRow: function( e ){
-		this.props.onClickRow( e, this.props.item );
-	}
-});
+    return React.DOM.tbody({key:'body'}, rows);
+  }
 
+  getItemField( item, field ){
+    return item[ field ];
+  }
 
-var JsonTable = createReactClass({
-	getSetting: getSetting,
+  normalizeColumns() {
+    const getItemField = this.props.cellRenderer || this.getItemField,
+      cols = this.props.columns,
+      items = this.props.rows
+    ;
 
-	render: function(){
-		var cols = this.normalizeColumns(),
-			contents = [this.renderRows( cols )]
-		;
+    if( !cols ){
+      if( !items || !items.length )
+        return [];
 
-		if( this.getSetting('header') )
-			contents.unshift( this.renderHeader( cols ) );
+      return Object.keys( items[0] ).map( function( key ){
+        return { key: key, label: key, cell: getItemField };
+      });
+    }
 
-		var tableClass = this.props.className || this.getSetting( 'classPrefix' ) + 'Table';
+    return cols.map( function( col ){
+      let key;
+      if( typeof col == 'string' ){
+        return {
+          key: col,
+          label: col,
+          cell: getItemField
+        };
+      }
 
-		return $.table({ className: tableClass }, contents );
-	},
+      if( typeof col == 'object' ){
+        key = col.key || col.label;
 
-	renderHeader: function( cols ){
-		var me = this,
-			prefix = this.getSetting( 'classPrefix' ),
-			headerClass = this.getSetting( 'headerClass' ),
-			cells = cols.map( function(col){
-				var className = prefix + 'Column';
-				if( headerClass )
-					className = headerClass( className, col.key );
+        // This is about get default column definition
+        // we use label as key if not defined
+        // we use key as label if not defined
+        // we use getItemField as cell function if not defined
+        return {
+          key: key,
+          label: col.label || key,
+          cell: col.cell || getItemField
+        };
+      }
 
-				return $.th(
-					{ className: className, key: col.key, onClick: me.onClickHeader, "data-key": col.key },
-					col.label
-				);
-			})
-		;
+      return {
+        key: 'unknown',
+        name:'unknown',
+        cell: 'Unknown'
+      };
+    });
+  }
 
-		return $.thead({ key: 'th' },
-			$.tr({ className: prefix + 'Header' }, cells )
-		);
-	},
+  getKey( item, i ) {
+    const field = this.props.settings && this.props.settings.keyField;
+    if( field && item[ field ] )
+      return item[ field ];
 
-	renderRows: function( cols ){
-		var me = this,
-			items = this.props.rows,
-			settings = this.props.settings || {},
-			i = 1
-		;
+    if( item.id )
+      return item.id;
 
-		if( !items || !items.length )
-			return $.tbody({key:'body'}, [$.tr({key:'row'}, $.td({key:'column'}, this.getSetting('noRowsMessage') ))]);
+    if( item._id )
+      return item._id;
 
-		var rows = items.map( function( item ){
-			var key = me.getKey( item, i );
-			return React.createElement(Row, {
-				key: key,
-				reactKey: key,
-				item: item,
-				settings: settings,
-				columns: cols,
-				i: i++,
-				onClickRow: me.onClickRow,
-				onClickCell: me.onClickCell
-			});
-		});
+    return i;
+  }
 
-		return $.tbody({key:'body'}, rows);
-	},
+  shouldComponentUpdate(){
+    return true;
+  }
 
-	getItemField: function( item, field ){
-		return item[ field ];
-	},
+  onClickRow( e, item ){
+    if( this.props.onClickRow ){
+      this.props.onClickRow( e, item );
+    }
+  }
 
-	normalizeColumns: function(){
-		var getItemField = this.props.cellRenderer || this.getItemField,
-			cols = this.props.columns,
-			items = this.props.rows
-		;
+  onClickHeader( e ){
+    if( this.props.onClickHeader ){
+      this.props.onClickHeader( e, e.target.dataset.key );
+    }
+  }
 
-		if( !cols ){
-			if( !items || !items.length )
-				return [];
+  onClickCell( e, key, item ){
+    if( this.props.onClickCell ){
+      this.props.onClickCell( e, key, item );
+    }
+  }
+}
 
-			return Object.keys( items[0] ).map( function( key ){
-				return { key: key, label: key, cell: getItemField };
-			});
-		}
+class Row extends React.Component{
+  getSetting(name){
+    return getSetting(name, this)
+  };
 
-		return cols.map( function( col ){
-			var key;
-			if( typeof col == 'string' ){
-				return {
-					key: col,
-					label: col,
-					cell: getItemField
-				};
-			}
+  render() {
+    const me = this,
+      props = this.props,
+      cellClass = this.getSetting('cellClass'),
+      rowClass = this.getSetting('rowClass'),
+      prefix = this.getSetting('classPrefix'),
+      cells = props.columns.map( function( col ){
+        let content = col.cell,
+          key = col.key,
+          className = prefix + 'Cell ' + prefix + 'Cell_' + key
+        ;
 
-			if( typeof col == 'object' ){
-				key = col.key || col.label;
+        if( cellClass )
+          className = cellClass( className, key, props.item );
 
-				// This is about get default column definition
-				// we use label as key if not defined
-				// we use key as label if not defined
-				// we use getItemField as cell function if not defined
-				return {
-					key: key,
-					label: col.label || key,
-					cell: col.cell || getItemField
-				};
-			}
+        if( typeof content === 'function' )
+          content = content( props.item, key );
 
-			return {
-				key: 'unknown',
-				name:'unknown',
-				cell: 'Unknown'
-			};
-		});
-	},
+        return React.DOM.td( {
+          className: className,
+          key: key,
+          "data-key": key,
+          onClick: me.onClickCell
+        }, content );
+      })
+    ;
 
-	getKey: function( item, i ){
-		var field = this.props.settings && this.props.settings.keyField;
-		if( field && item[ field ] )
-			return item[ field ];
+    let className = prefix + 'Row ' + prefix +
+      (props.i % 2 ? 'Odd' : 'Even')
+    ;
 
-		if( item.id )
-			return item.id;
+    if( props.reactKey )
+      className += ' ' + prefix + 'Row_' + props.reactKey;
 
-		if( item._id )
-			return item._id;
+    if( rowClass )
+      className = rowClass( className, props.item );
 
-		return i;
-	},
+    return React.DOM.tr({
+      className: className,
+      onClick: me.onClickRow,
+      key: this.props.reactKey
+    }, cells );
+  };
 
-	shouldComponentUpdate: function(){
-		return true;
-	},
+  onClickCell(e) {
+    this.props.onClickCell( e, e.target.dataset.key, this.props.item );
+  };
 
-	onClickRow: function( e, item ){
-		if( this.props.onClickRow ){
-			this.props.onClickRow( e, item );
-		}
-	},
-
-	onClickHeader: function( e ){
-		if( this.props.onClickHeader ){
-			this.props.onClickHeader( e, e.target.dataset.key );
-		}
-	},
-
-	onClickCell: function( e, key, item ){
-		if( this.props.onClickCell ){
-			this.props.onClickCell( e, key, item );
-		}
-	}
-});
-
+  onClickRow(e) {
+    this.props.onClickRow( e, this.props.item );
+  };
+}
 
 module.exports = JsonTable;

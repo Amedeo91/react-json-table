@@ -1,10 +1,11 @@
 {
   "name": "react-json-table-v2",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A simple but reactive table react component to display JSON data, based on https://github.com/arqex/react-json-table",
   "main": "rjt.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -20,11 +21,16 @@
   "bugs": {
     "url": "https://github.com/Amedeo91/react-json-table/issues"
   },
+  "dependencies": {
+    "create-react-class": "^15.7.0",
+    "react": "16.13.1"
+  },
   "homepage": "https://github.com/Amedeo91/react-json-table",
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-insert": "^0.4.0",
     "gulp-uglify": "^1.2.0",
+    "gulp-uglify-es": "^2.0.0",
     "gulp-webpack": "^1.4.0"
   }
 }

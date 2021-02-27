@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-	uglify = require('gulp-uglify'),
+	uglify = require('gulp-uglify-es').default,
 	insert = require('gulp-insert'),
 	webpack = require('gulp-webpack')
 ;
@@ -22,7 +22,7 @@ var getWPConfig = function( filename ){
 	};
 };
 
-var cr = ('/*\n%%name%% v%%version%%\n%%homepage%%\n%%license%%: https://github.com/arqex/' + packageName + '/raw/master/LICENSE\n*/\n')
+var cr = ('/*\n%%name%% v%%version%%\n%%homepage%%\n%%license%%: https://github.com/Amedeo91/' + packageName + '/raw/master/LICENSE\n*/\n')
 	.replace( '%%name%%', pack.name)
 	.replace( '%%version%%', pack.version)
 	.replace( '%%license%%', pack.license)
@@ -35,7 +35,7 @@ function build( config, minify ){
 	;
 
 	if( minify ){
-		stream.pipe( uglify() );
+		//stream.pipe( uglify() );
 	}
 
 	return stream.pipe( insert.prepend( cr ) )
@@ -48,4 +48,4 @@ gulp.task("build", function( callback ) {
 	return build( getWPConfig( packageName + '.min' ), true );
 });
 
-gulp.task( 'default', ['build'] );
+// gulp.task( 'default', ['build'] );
