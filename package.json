@@ -1,6 +1,6 @@
 {
   "name": "react-json-table-v2",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A simple but reactive table react component to display JSON data, based on https://github.com/arqex/react-json-table",
   "main": "rjt.js",
   "scripts": {
