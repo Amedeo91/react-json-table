@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "create-react-class": "^15.7.0",
-    "react": "16.13.1"
+    "react": "16.13.1",
+    "react-dom-factories": "^1.0.2"
   },
   "homepage": "https://github.com/Amedeo91/react-json-table",
   "devDependencies": {

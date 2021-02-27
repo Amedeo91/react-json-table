@@ -1,5 +1,8 @@
 var React = require('react');
 
+React.DOM = require('react-dom-factories');
+
+
 // Some shared attrs for JsonTable and JsonRow
 let defaultSettings = {
     header: true,
