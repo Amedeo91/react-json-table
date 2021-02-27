@@ -1,5 +1,5 @@
 /*
-react-json-table-v2 v0.1.4
+react-json-table-v2 v0.1.5
 https://github.com/Amedeo91/react-json-table
 MIT: https://github.com/Amedeo91/react-json-table/raw/master/LICENSE
 */
@@ -81,6 +81,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	;
 
 	class JsonTable extends React.Component{
+	  constructor (props){
+	    super(props);
+	    this.onClickRow = this.onClickRow.bind(this);
+	    this.onClickCell = this.onClickCell.bind(this);
+	    this.onClickHeader = this.onClickCell.bind(this);
+	  }
+
 	  getSetting(name){
 	    return getSetting(name, this)
 	  };
@@ -235,6 +242,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	class Row extends React.Component{
+
+	  constructor (props){
+	    super(props);
+	    this.onClickRow = this.onClickRow.bind(this);
+	    this.onClickCell = this.onClickCell.bind(this);
+	  }
+
 	  getSetting(name){
 	    return getSetting(name, this)
 	  };

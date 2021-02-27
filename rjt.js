@@ -20,6 +20,13 @@ let defaultSettings = {
 ;
 
 class JsonTable extends React.Component{
+  constructor (props){
+    super(props);
+    this.onClickRow = this.onClickRow.bind(this);
+    this.onClickCell = this.onClickCell.bind(this);
+    this.onClickHeader = this.onClickCell.bind(this);
+  }
+
   getSetting(name){
     return getSetting(name, this)
   };
@@ -174,6 +181,13 @@ class JsonTable extends React.Component{
 }
 
 class Row extends React.Component{
+
+  constructor (props){
+    super(props);
+    this.onClickRow = this.onClickRow.bind(this);
+    this.onClickCell = this.onClickCell.bind(this);
+  }
+
   getSetting(name){
     return getSetting(name, this)
   };
