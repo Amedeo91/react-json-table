@@ -24,7 +24,7 @@ class JsonTable extends React.Component{
     super(props);
     this.onClickRow = this.onClickRow.bind(this);
     this.onClickCell = this.onClickCell.bind(this);
-    this.onClickHeader = this.onClickCell.bind(this);
+    this.onClickHeader = this.onClickHeader.bind(this);
   }
 
   getSetting(name){

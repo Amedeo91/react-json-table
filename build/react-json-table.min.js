@@ -1,5 +1,5 @@
 /*
-react-json-table-v2 v0.1.5
+react-json-table-v2 v0.1.7
 https://github.com/Amedeo91/react-json-table
 MIT: https://github.com/Amedeo91/react-json-table/raw/master/LICENSE
 */
@@ -85,7 +85,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    super(props);
 	    this.onClickRow = this.onClickRow.bind(this);
 	    this.onClickCell = this.onClickCell.bind(this);
-	    this.onClickHeader = this.onClickCell.bind(this);
+	    this.onClickHeader = this.onClickHeader.bind(this);
 	  }
 
 	  getSetting(name){
