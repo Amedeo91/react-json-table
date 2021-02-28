@@ -35,7 +35,7 @@ function build( config, minify ){
 	;
 
 	if( minify ){
-		//stream.pipe( uglify() );
+		stream.pipe( uglify() );
 	}
 
 	return stream.pipe( insert.prepend( cr ) )

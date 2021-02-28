@@ -1,13 +1,17 @@
-# react-json-table
+# react-json-table-v2
 A simple but flexible table react component to display JSON data.
 
 As simple as feeding it with an array of objects.
 ```js
+import JsonTable from "react-json-table-v2";
+
+
 var items = [
   { name: 'Louise', age: 27, color: 'red' },
   { name: 'Margaret', age: 15, color: 'blue'},
   { name: 'Lisa', age:34, color: 'yellow'}
 ];
+
 
 React.render(<JsonTable rows={ items } />, document.body);
 ```
@@ -36,9 +40,9 @@ I don't want to do it ever again, JsonTable component will do that ugly stuff so
 ## Installation
 Using node package manager:
 ```
-npm install react-json-table --save
+npm install react-json-table-v2 --save
 ```
-You can also use the built UMD files [react-json-table.js](https://github.com/arqex/react-json-table/blob/master/build/react-json-table.js)(6KB) and [react-json-table.min.js](https://github.com/arqex/react-json-table/blob/master/build/react-json-table.min.js)(3KB) if you want `JsonTable` globally or as an AMD package.
+You can also use the built UMD files [react-json-table.js](https://github.com/Amedeo91/react-json-table/blob/master/build/react-json-table.js)(6KB) and [react-json-table.min.js](https://github.com/Amedeo91/react-json-table/blob/master/build/react-json-table.min.js)(3KB) if you want `JsonTable` globally or as an AMD package.
 
 Half of the built version size is the code to create the UMD module. NPM version is really lightweight.
 

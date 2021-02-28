@@ -1,5 +1,5 @@
 /*
-react-json-table-v2 v0.1.7
+react-json-table-v2 v0.1.8
 https://github.com/Amedeo91/react-json-table
 MIT: https://github.com/Amedeo91/react-json-table/raw/master/LICENSE
 */
